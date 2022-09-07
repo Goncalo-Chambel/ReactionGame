@@ -124,6 +124,7 @@ while True:
     frame = cv2.flip(frame, 1)
     frame = cv2.copyMakeBorder(frame, border_size, border_size, border_size, border_size, cv2.BORDER_CONSTANT,
                                value=[0, 0, 0])
+
     if can_reset and not is_playing and not is_reseting and has_reset:
         t_start = time.time()
         is_reseting = True
@@ -146,7 +147,7 @@ while True:
             can_reset = False
             is_playing = True
             target_count = 0
-    
+
     if is_playing:
         hit_target = False
         elapsed_time = time.time() - t_start
@@ -158,15 +159,22 @@ while True:
             for i in range(len(hands)):
                 hand_position = hands[i]["center"]
                 hand_circle = Circle(hand_position, hand_radius, (0, 0, 255), 1)
-                hand_circle.draw(frame)
+
                 if target.check_intersection(hand_circle.coordinates, hand_circle.radius):
                     # cleared
-                    hit_target = True
-                    break
-
+                    hand_circle.color = (0,255,0)
+                    #hit_target = True
+                    #break
+                else:
+                    hand_circle.color = (0,0,255)
+                hand_circle.draw(frame)
+        '''
+        frame = cv2.rectangle(frame, score_text_pos, (score_text_pos[0] + 150, score_text_pos[1] - 30), (0, 0, 0), -1)
         frame = cv2.putText(frame, "Total: " + str(target_count), score_text_pos,
                             cv2.FONT_HERSHEY_DUPLEX, 1, (0, 0, 255), 2)
-        frame = cv2.putText(frame, "Time left: " + "{:.2f}".format(elapsed_time), time_text_pos,
+
+        frame = cv2.rectangle(frame, time_text_pos, (time_text_pos[0] + 200, time_text_pos[1] - 30), (0, 0, 0), -1)
+        frame = cv2.putText(frame, "Time: " + "{:.2f}".format(elapsed_time), time_text_pos,
                             cv2.FONT_HERSHEY_DUPLEX, 1, (0, 0, 255), 2)
         if hit_target:
             target_count += 1
@@ -196,9 +204,11 @@ while True:
                     highscore_message = "Best score: " + str(highscore_targets)
 
     if can_reset:
+        frame = cv2.rectangle(frame, object_title_pos, (object_title_pos[0] + 800, object_title_pos[1] - 30), (0, 0, 0), -1)
         frame = cv2.putText(frame, final_message, object_title_pos, cv2.FONT_HERSHEY_DUPLEX, 1, (0, 0, 255), 2)
+        frame = cv2.rectangle(frame, timer_title_pos, (timer_title_pos[0] + 300, timer_title_pos[1] - 30), (0, 0, 0), -1)
         frame = cv2.putText(frame, highscore_message, timer_title_pos, cv2.FONT_HERSHEY_DUPLEX, 1, (0, 0, 255), 2)
-
+        '''
 
     cv2.imshow("Reaction Game", frame)
 
